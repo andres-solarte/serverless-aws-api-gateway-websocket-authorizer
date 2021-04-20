@@ -1,0 +1,52 @@
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${self:service}-cognito-${self:provider.stage}-user-pool
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId:
+        Ref: CognitoUserPool
+      Domain: ${self:service}-${self:provider.stage}
+
+  CognitoUserPoolResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      Name: ${self:service}-${self:provider.stage}-api
+      Identifier: ${self:custom.variables.cognito-resource-server-default-identifier}
+      Scopes:
+        - ScopeName: ${self:custom.variables.cognito-resource-server-default-scope-name}
+          ScopeDescription: Default Scope
+      UserPoolId:
+        Ref: CognitoUserPool
+
+  CognitoUserPoolClient:
+    DependsOn:
+      - CognitoUserPoolResourceServer
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ${self:service}-cognito-${self:provider.stage}-user-pool-client
+      UserPoolId:
+        Ref: CognitoUserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthFlows:
+        - client_credentials
+      AllowedOAuthScopes:
+        - ${self:custom.variables.cognito-resource-server-default-scope-full-name}
+      AllowedOAuthFlowsUserPoolClient: true
+
+Outputs:
+  CognitoUserPoolId:
+    Value:
+      Ref: CognitoUserPool
+
+  CognitoUserPoolClientId:
+    Value:
+      Ref: CognitoUserPoolClient

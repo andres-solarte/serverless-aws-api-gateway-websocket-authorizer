@@ -1,0 +1,5 @@
+s3-sls-deployment-bucket-name: col-autos-sls-infrastructure-s3-${self:provider.stage}-sls-deployment-bucket
+
+cognito-resource-server-default-identifier: default
+cognito-resource-server-default-scope-name: all
+cognito-resource-server-default-scope-full-name: ${self:custom.variables.cognito-resource-server-default-identifier}/${self:custom.variables.cognito-resource-server-default-scope-name}

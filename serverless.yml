@@ -1,0 +1,30 @@
+service: sls-api-gateway-websocket-auth
+
+
+custom:
+  variables: ${file(serverless/variables.yml)}
+
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - '!serverless/**'
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  deploymentBucket:
+    name: ${self:custom.variables.s3-sls-deployment-bucket-name}
+
+
+functions:
+  - ${file(serverless/functions/authorize-websocket.yml)}
+  - ${file(serverless/functions/connect-websocket.yml)}
+
+
+resources:
+  - ${file(serverless/resources/aws-cognito-authorization-user-pool.yml)}

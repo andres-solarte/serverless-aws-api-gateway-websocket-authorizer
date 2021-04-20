@@ -1,0 +1,5 @@
+type: COGNITO_USER_POOLS
+authorizerId:
+  Ref: ApiGatewayAuthorizer
+scopes:
+  - ${self:custom.variables.cognito-resource-server-default-scope-full-name}

@@ -1,0 +1,2 @@
+authorizeWebsocket:
+  handler: src/application/handlers/authorize-websocket.handler

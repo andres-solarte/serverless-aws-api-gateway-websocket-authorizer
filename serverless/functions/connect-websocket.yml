@@ -1,0 +1,9 @@
+connectWebsocket:
+  handler: src/application/handlers/connect-websocket.handler
+  events:
+    - websocket:
+        route: $connect
+        authorizer:
+          name: authorizeWebsocket
+          identitySource:
+            - 'route.request.querystring.Authorization'
