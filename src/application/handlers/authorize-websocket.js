@@ -76,29 +76,25 @@ const verifyTokenExpiration = (tokenExpiration) => {
     }
 }
 
-const handler = async (event, context) => {
+const handler = async (event) => {
     const {
         queryStringParameters: { Authorization },
         methodArn
     } = event
 
-    try {
-        if (!Authorization)
-            throw AUTHORIZATION_TOKEN_NOT_PRESENT
+    if (!Authorization)
+        throw AUTHORIZATION_TOKEN_NOT_PRESENT
 
-        const decodedJwtHeader = decodeJwtHeader(Authorization, { header: true })
-        const decodedJwtPayload = decodeJwtPayload(Authorization)
+    const decodedJwtHeader = decodeJwtHeader(Authorization, { header: true })
+    const decodedJwtPayload = decodeJwtPayload(Authorization)
 
-        const { kid } = decodedJwtHeader
-        const { iss, exp } = decodedJwtPayload
+    const { kid } = decodedJwtHeader
+    const { iss, exp } = decodedJwtPayload
 
-        await verifyPublicKey(iss, kid)
-        verifyTokenExpiration(exp)
+    await verifyPublicKey(iss, kid)
+    verifyTokenExpiration(exp)
 
-        return context.succeed(generateAllow('me', methodArn))
-    } catch (error) {
-        return context.fail(error)
-    }
+    return generateAllow('me', methodArn)
 }
 
 module.exports = { handler }
